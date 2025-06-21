@@ -2,7 +2,7 @@ import React from 'react'
 import LibrarySection from './components/LibrarySection'
 import FormSection from './components/FormSection'
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1a2a3a] to-[#2c3e50] flex justify-center items-center p-5 relative overflow-hidden">
 
