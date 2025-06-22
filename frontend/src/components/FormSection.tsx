@@ -1,22 +1,56 @@
+import axios from "axios";
 import React, { useState } from "react";
 
-const FormSection = ({ activeTab, setActiveTab }) => {
-    const [showSignInPassword, setShowSignInPassword] = useState(false);
-    const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+interface FormSectionProps {
+    activeTab: "signin" | "signup";  // specify possible values or use string if you want
+    setActiveTab: (tab: "signin" | "signup") => void;  // function to update the tab
+}
 
-    const handleSignInSubmit = (e) => {
+const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) => {
+    const [showSignInPassword, setShowSignInPassword] = useState<boolean>(false);
+    const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
+
+    const [signupData, setSignupData] = useState({
+        username: "",
+        email: "",
+        password: ""
+    });
+
+    // Optional: controlled inputs for sign-in (not shown here)
+
+    const handleSignInSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         alert(
             "Accessing your digital library... This would redirect to your library dashboard in a real application."
         );
     };
 
-    const handleSignUpSubmit = (e) => {
-        e.preventDefault();
-        alert(
-            "Creating your personal digital library... This would create your library in a real application."
-        );
+    const handleSignUpForm = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setSignupData(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
+
+    const handleSignUpSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("API URL:", import.meta.env.VITE_API_URL);
+
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/v1/user/signup`,
+                signupData
+            );
+
+            console.log("Signup response:", response.data);
+            // Optionally, show success message or redirect user
+        } catch (error) {
+            console.error("Signup error:", error);
+            // Show error message to user if needed
+        }
+    };
+
 
     return (
         <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
@@ -28,6 +62,7 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                             key={tab}
                             className={`py-3 px-6 font-semibold transition-all duration-300 relative ${activeTab === tab ? "text-[#65a3e0]" : "text-[#a0aec0]"
                                 }`}
+
                             onClick={() => setActiveTab(tab)}
                         >
                             {tab === "signin" ? "Sign In" : "Sign Up"}
@@ -42,7 +77,7 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                 <form
                     className={`${activeTab === "signin" ? "block" : "hidden"
                         } animate-fadeIn`}
-                    onSubmit={handleSignInSubmit}
+                    onSubmit={handleSignUpSubmit}
                 >
                     <h2 className="text-2xl text-[#f8fafc] mb-6">Access Your Library</h2>
 
@@ -52,6 +87,7 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                             type="email"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Email Address"
+
                             required
                         />
                     </div>
@@ -77,10 +113,7 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                     </div>
 
                     <div className="flex justify-between items-center mb-6 text-sm">
-                        <label className="flex items-center cursor-pointer">
-                            <input type="checkbox" className="mr-2 accent-[#65a3e0]" />
-                            Remember me
-                        </label>
+
                         <a
                             href="#"
                             className="text-[#65a3e0] hover:text-[#a0c5e8] hover:underline transition-colors"
@@ -96,30 +129,9 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                         Access My Library
                     </button>
 
-                    <div className="relative my-6">
-                        <div className="absolute top-1/2 left-0 w-[30%] h-px bg-[#2d3748]"></div>
-                        <p className="text-center text-[#a0aec0] mb-4">Or sign in with</p>
-                        <div className="absolute top-1/2 right-0 w-[30%] h-px bg-[#2d3748]"></div>
-                    </div>
 
-                    <div className="flex justify-center gap-4 mb-6">
-                        {[
-                            { provider: "google", color: "#dd4b39", icon: "fa-google" },
-                            { provider: "github", color: "#333333", icon: "fa-github" },
-                            { provider: "microsoft", color: "#0078d7", icon: "fa-microsoft" },
-                        ].map((social) => (
-                            <a
-                                key={social.provider}
-                                href="#"
-                                className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:-translate-y-0.5"
-                                style={{ backgroundColor: social.color }}
-                            >
-                                <i className={`fab ${social.icon}`}></i>
-                            </a>
-                        ))}
-                    </div>
 
-                    <p className="text-center text-[#a0aec0] text-sm">
+                    <p className="text-center text-[#a0aec0] text-sm mt-7">
                         Don't have a library?{" "}
                         <button
                             type="button"
@@ -145,6 +157,9 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                             type="text"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Your Name"
+                            name="username"
+                            value={signupData.username}
+                            onChange={handleSignUpForm}
                             required
                         />
                     </div>
@@ -155,6 +170,9 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                             type="email"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Email Address"
+                            onChange={handleSignUpForm}
+                            value={signupData.email}
+                            name="email"
                             required
                         />
                     </div>
@@ -165,6 +183,9 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                             type={showSignUpPassword ? "text" : "password"}
                             className="w-full py-3 pl-12 pr-12 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Create Password"
+                            onChange={handleSignUpForm}
+                            value={signupData.password}
+                            name="password"
                             required
                         />
                         <button
@@ -190,30 +211,8 @@ const FormSection = ({ activeTab, setActiveTab }) => {
                         Create My Library
                     </button>
 
-                    <div className="relative my-6">
-                        <div className="absolute top-1/2 left-0 w-[30%] h-px bg-[#2d3748]"></div>
-                        <p className="text-center text-[#a0aec0] mb-4">Or create with</p>
-                        <div className="absolute top-1/2 right-0 w-[30%] h-px bg-[#2d3748]"></div>
-                    </div>
 
-                    <div className="flex justify-center gap-4 mb-6">
-                        {[
-                            { provider: "google", color: "#dd4b39", icon: "fa-google" },
-                            { provider: "github", color: "#333333", icon: "fa-github" },
-                            { provider: "microsoft", color: "#0078d7", icon: "fa-microsoft" },
-                        ].map((social) => (
-                            <a
-                                key={social.provider}
-                                href="#"
-                                className="w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:-translate-y-0.5"
-                                style={{ backgroundColor: social.color }}
-                            >
-                                <i className={`fab ${social.icon}`}></i>
-                            </a>
-                        ))}
-                    </div>
-
-                    <p className="text-center text-[#a0aec0] text-sm">
+                    <p className="text-center text-[#a0aec0] text-sm mt-7">
                         Already have a library?{" "}
                         <button
                             type="button"
