@@ -16,13 +16,30 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
         password: ""
     });
 
-    // Optional: controlled inputs for sign-in (not shown here)
+    const [signInData, setSignInData] = useState({
+        "email": "",
+        password: ""
+    })
 
-    const handleSignInSubmit = (e: React.FormEvent) => {
+    const handleSignInForm = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+
+
+        setSignInData((prev) => ({
+            ...prev, [name]: value
+        }))
+    }
+
+
+
+    const handleSignInSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert(
-            "Accessing your digital library... This would redirect to your library dashboard in a real application."
-        );
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}`, signInData)
+            console.log(response.data)
+        } catch (error) {
+            console.log("you face some issue" + error)
+        }
     };
 
     const handleSignUpForm = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +94,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                 <form
                     className={`${activeTab === "signin" ? "block" : "hidden"
                         } animate-fadeIn`}
-                    onSubmit={handleSignUpSubmit}
+                    onSubmit={handleSignInSubmit}
                 >
                     <h2 className="text-2xl text-[#f8fafc] mb-6">Access Your Library</h2>
 
@@ -87,7 +104,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                             type="email"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Email Address"
-
+                            onChange={handleSignInForm}
+                            name="email"
+                            value={signInData.email}
                             required
                         />
                     </div>
@@ -99,6 +118,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                             className="w-full py-3 pl-12 pr-12 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
                             placeholder="Password"
                             required
+                            onChange={handleSignInForm}
+                            name="password"
+                            value={signInData.password}
                         />
                         <button
                             type="button"
