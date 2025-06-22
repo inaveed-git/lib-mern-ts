@@ -17,7 +17,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
     });
 
     const [signInData, setSignInData] = useState({
-        "email": "",
+        email: "",
         password: ""
     })
 
@@ -35,11 +35,12 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
     const handleSignInSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}`, signInData)
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/user/signin`, signInData)
             console.log(response.data)
         } catch (error) {
             console.log("you face some issue" + error)
         }
+        // signin
     };
 
     const handleSignUpForm = (e: React.ChangeEvent<HTMLInputElement>) => {
