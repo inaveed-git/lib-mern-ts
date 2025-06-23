@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json())
 
 const corsOptions = {
-    origin: 'http://localhost:5174' || 'https://myshelflib.netlify.app/', // your React frontend URL
+    origin: ['http://localhost:5174', 'https://myshelflib.netlify.app'], // your React frontend URL
     credentials: true,               // allow cookies
 };
 
