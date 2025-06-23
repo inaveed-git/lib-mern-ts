@@ -14,6 +14,8 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter>
+
+      <h1>check one</h1>
       <Routes>
         {/* Public Route: Show form if not logged in */}
         {!user && (
