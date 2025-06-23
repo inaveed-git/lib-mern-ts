@@ -1,21 +1,48 @@
-import React, { useState } from 'react'
-import LibrarySection from './components/LibrarySection'
-import FormSection from './components/FormSection'
+// src/App.tsx
+import React, { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LibrarySection from "./components/LibrarySection";
+
+import Dashboard from "./pages/Dashboard";
+import { useRecoilValue } from "recoil";
+import { userState } from "./recoil/atoms/userAtom";
+import AuthPage from "./pages/AuthPage";
 
 const App: React.FC = () => {
-
-  const [activeTab, setActiveTab] = useState("signin");
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
+  const user = useRecoilValue(userState);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a2a3a] to-[#2c3e50] flex justify-center items-center relative ">
+    <BrowserRouter>
+      <Routes>
+        {/* Public Route: Show form if not logged in */}
+        {!user && (
+          <>
+            <Route
+              path="/"
+              element={
+                <AuthPage
 
+                />
+              }
+            />
+            {/* Catch all redirects to / if not logged in */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </>
+        )}
 
-      <div className="w-full max-w-5xl  bg-[rgba(26,32,44,0.92)] rounded-xl shadow-2xl overflow-x-hidden overflow-y-hidden relative border border-[rgba(101,163,224,0.2)] backdrop-blur-md z-10 flex flex-col md:flex-row">
-        <LibrarySection />
-        <FormSection activeTab={activeTab} setActiveTab={setActiveTab} />
-      </div>
-    </div>
-  )
-}
+        {/* Protected Routes: Only visible if user is logged in */}
+        {user && (
+          <>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/library" element={<LibrarySection />} />
+            {/* Redirect unknown paths to dashboard */}
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </>
+        )}
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-export default App
+export default App;

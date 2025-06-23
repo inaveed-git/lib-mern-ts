@@ -55,7 +55,7 @@ export const sigin = async (req: Request, res: Response) => {
 
         const user = await User.findOne({ email }).select("+password");
 
-        if (!user || (await user.matchPassword(password))) {
+        if (!user || !(await user.matchPassword(password))) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid password"
@@ -63,20 +63,27 @@ export const sigin = async (req: Request, res: Response) => {
             })
         }
 
-        const token = sendTokenResponse((user._id as Types.ObjectId).toString())
+        const token = sendTokenResponse((user._id as Types.ObjectId).toString(), user.isSuperAdmin)
         handleTokenDelivery(res, token);
 
+        const { password: _, ...sanitizedUser } = user.toObject();
 
-
-
-        const { password: _, isSuperAdmin: __, ...newUser } = user.toObject()
-
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
-            message: "User sigin successfully",
+            message: "User signed in successfully",
             token,
-            newUser
-        })
+            user: sanitizedUser,
+        });
+
+
+        // const { password: _, isSuperAdmin: __, ...newUser } = user.toObject()
+
+        // return res.status(201).json({
+        //     success: true,
+        //     message: "User sigin successfully",
+        //     token,
+        //     newUser
+        // })
 
     } catch (error) {
         console.log(`Some error occur ${error}`)

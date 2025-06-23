@@ -2,9 +2,9 @@ import { Response } from "express"
 import jwt from "jsonwebtoken"
 
 
-const sendTokenResponse = (userid: string): string => {
+const sendTokenResponse = (userid: string, isSuperAdmin: boolean): string => {
 
-    return jwt.sign({ id: userid }, "thesecretkey", { expiresIn: '1d' })
+    return jwt.sign({ id: userid, isSuperAdmin }, "thesecretkey", { expiresIn: '1d' })
 
 }
 

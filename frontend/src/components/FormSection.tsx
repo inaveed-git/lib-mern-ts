@@ -1,14 +1,24 @@
 import axios from "axios";
 import React, { useState } from "react";
 
+
+import { useSetRecoilState } from "recoil";
+import { userState } from "../recoil/atoms/userAtom";
+import type { UserType } from "../recoil/atoms/userAtom";
+import { useNavigate } from "react-router-dom";
+
 interface FormSectionProps {
     activeTab: "signin" | "signup";  // specify possible values or use string if you want
     setActiveTab: (tab: "signin" | "signup") => void;  // function to update the tab
 }
 
 const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) => {
+
+
+    const navigate = useNavigate()
     const [showSignInPassword, setShowSignInPassword] = useState<boolean>(false);
     const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
+    const setUser = useSetRecoilState(userState);
 
     const [signupData, setSignupData] = useState({
         username: "",
@@ -35,8 +45,15 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
     const handleSignInSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/user/signin`, signInData)
-            console.log(response.data)
+            const response = await axios.post<{ user: UserType }>(
+                `${import.meta.env.VITE_API_URL}/api/v1/user/signin`,
+                signInData,
+                { withCredentials: true }
+            );
+            setUser(response.data.user);
+
+            navigate("/dashboard");
+
         } catch (error) {
             console.log("you face some issue" + error)
         }
@@ -56,13 +73,12 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
         console.log("API URL:", import.meta.env.VITE_API_URL);
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/v1/user/signup`,
                 signupData
             );
+            setActiveTab("signin");
 
-            console.log("Signup response:", response.data);
-            // Optionally, show success message or redirect user
         } catch (error) {
             console.error("Signup error:", error);
             // Show error message to user if needed
