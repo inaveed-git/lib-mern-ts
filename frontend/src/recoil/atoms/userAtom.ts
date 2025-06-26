@@ -7,7 +7,15 @@ export interface UserType {
     isSuperAdmin: boolean;
 }
 
-export const userState = atom<UserType | null>({
+export interface AuthState {
+    user: UserType | null;
+    isLoading: boolean;
+}
+
+export const userState = atom<AuthState>({
     key: "userState",
-    default: null,
+    default: {
+        user: null,
+        isLoading: true
+    },
 });

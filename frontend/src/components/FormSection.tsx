@@ -1,24 +1,21 @@
 import axios from "axios";
-import React, { useState } from "react";
-
-
-import { useSetRecoilState } from "recoil";
-import { userState } from "../recoil/atoms/userAtom";
+import React, { useState, useEffect } from "react";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import type { UserType } from "../recoil/atoms/userAtom";
+import { userState } from "../recoil/atoms/userAtom";
 import { useNavigate } from "react-router-dom";
 
 interface FormSectionProps {
-    activeTab: "signin" | "signup";  // specify possible values or use string if you want
-    setActiveTab: (tab: "signin" | "signup") => void;  // function to update the tab
+    activeTab: "signin" | "signup";
+    setActiveTab: (tab: "signin" | "signup") => void;
 }
 
 const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) => {
-
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [showSignInPassword, setShowSignInPassword] = useState<boolean>(false);
     const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
-    const setUser = useSetRecoilState(userState);
+    const setAuthState = useSetRecoilState(userState);
+    const { user } = useRecoilValue(userState);
 
     const [signupData, setSignupData] = useState({
         username: "",
@@ -28,19 +25,20 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
     const [signInData, setSignInData] = useState({
         email: "",
-        password: ""
-    })
+        password: "",
+    });
+
+    // Redirect to dashboard if user is already authenticated
+    useEffect(() => {
+        if (user) {
+            navigate("/dashboard");
+        }
+    }, [user, navigate]);
 
     const handleSignInForm = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-
-
-        setSignInData((prev) => ({
-            ...prev, [name]: value
-        }))
-    }
-
-
+        setSignInData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleSignInSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,28 +48,29 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                 signInData,
                 { withCredentials: true }
             );
-            setUser(response.data.user);
 
-            navigate("/dashboard");
+            // Update auth state with the new user
+            setAuthState({
+                user: response.data.user,
+                isLoading: false
+            });
+
+            // Clear sign-in form data
+            setSignInData({ email: "", password: "" });
 
         } catch (error) {
-            console.log("you face some issue" + error)
+            console.error("Sign-in error:", error);
+            // Optionally show error message to user
         }
-        // signin
     };
 
     const handleSignUpForm = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setSignupData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setSignupData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSignUpSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("API URL:", import.meta.env.VITE_API_URL);
-
         try {
             await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/v1/user/signup`,
@@ -79,12 +78,14 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
             );
             setActiveTab("signin");
 
+            // Clear sign-up form data
+            setSignupData({ username: "", email: "", password: "" });
+
         } catch (error) {
             console.error("Signup error:", error);
-            // Show error message to user if needed
+            // Optionally show error message to user
         }
     };
-
 
     return (
         <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
@@ -96,7 +97,6 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                             key={tab}
                             className={`py-3 px-6 font-semibold transition-all duration-300 relative ${activeTab === tab ? "text-[#65a3e0]" : "text-[#a0aec0]"
                                 }`}
-
                             onClick={() => setActiveTab(tab)}
                         >
                             {tab === "signin" ? "Sign In" : "Sign Up"}
@@ -152,7 +152,6 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                     </div>
 
                     <div className="flex justify-between items-center mb-6 text-sm">
-
                         <a
                             href="#"
                             className="text-[#65a3e0] hover:text-[#a0c5e8] hover:underline transition-colors"
@@ -167,8 +166,6 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                     >
                         Access My Library
                     </button>
-
-
 
                     <p className="text-center text-[#a0aec0] text-sm mt-7">
                         Don't have a library?{" "}
@@ -239,17 +236,12 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                         </button>
                     </div>
 
-
-
-
-
                     <button
                         type="submit"
                         className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                     >
                         Create My Library
                     </button>
-
 
                     <p className="text-center text-[#a0aec0] text-sm mt-7">
                         Already have a library?{" "}

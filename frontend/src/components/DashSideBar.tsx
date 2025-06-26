@@ -1,112 +1,101 @@
-import React, { useEffect, useState } from "react";
+import React from 'react';
 import {
-    HiAnnotation,
-    HiArrowSmRight,
-    HiChartPie,
-    HiDocumentText,
-    HiOutlineUserGroup,
-    HiUser,
-} from "react-icons/hi";
-import { Link, useLocation } from "react-router-dom";
+    FaBook,
+    FaChartBar,
+    FaCog,
+    FaPlusCircle,
+    FaSignOutAlt,
+    FaUser,
+    FaBookOpen
+} from 'react-icons/fa';
+import { Link, useLocation } from 'react-router-dom';
 
-function DashSideBar() {
-    const isAdmin = true; // Dummy logic
-    const userRole = isAdmin ? "Admin" : "User";
+const DashSideBar: React.FC = () => {
     const location = useLocation();
-    const [tab, setTab] = useState("");
 
-    useEffect(() => {
-        const urlParams = new URLSearchParams(location.search);
-        const tabFromUrl = urlParams.get("tab");
-        if (tabFromUrl) setTab(tabFromUrl);
-    }, [location.search]);
+    const navItems = [
+        {
+            icon: <FaChartBar className="text-xl" />,
+            text: 'Dashboard',
+            path: '/dashboard?tab=AdminDash'
+        },
+
+
+        {
+            icon: <FaPlusCircle className="text-xl" />,
+            text: 'Add New Book',
+            path: '/dashboard?tab=create-book'
+        },
+        {
+            icon: <FaBook className="text-xl" />,
+            text: 'Manage Books',
+            path: '/dashboard?tab=AdminMangeBooks'
+        },
+        {
+            icon: <FaBookOpen className="text-xl" />,
+            text: 'My Library',
+            path: '/dashboard?tab=AdminLibrary'
+        },
+
+        {
+            icon: <FaUser className="text-xl" />,
+            text: 'User Management',
+            path: '/users'
+        },
+        {
+            icon: <FaCog className="text-xl" />,
+            text: 'Settings',
+            path: '/settings'
+        },
+    ];
 
     return (
-        <div className="w-full md:w-56 bg-white border-r h-full p-4">
-            <ul className="space-y-2">
-                {isAdmin && (
-                    <li>
-                        <Link
-                            to="/dashboard?tab=AdminDash"
-                            className={`flex items-center px-3 py-2 rounded-lg transition ${tab === "AdminDash"
-                                ? "bg-blue-100 text-blue-600 font-semibold"
-                                : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                        >
-                            <HiChartPie className="w-5 h-5 mr-3" />
-                            <span>Dashboard</span>
-                        </Link>
-                    </li>
-                )}
+        <div className="w-full md:w-56 h-screen bg-gradient-to-br from-[#1e3a5f] to-[#2d5182] text-white p-4 flex flex-col">
+            {/* Logo/Header */}
+            <div className="p-4 mb-6 border-b border-[#2d5182]">
+                <h1 className="text-xl font-bold flex items-center gap-2">
+                    <FaBook className="text-[#65a3e0]" />
+                    ShelfLib
+                </h1>
+            </div>
 
-                <li>
-                    <Link
-                        to="/dashboard?tab=AdminMangeBooks"
-                        className={`flex items-center px-3 py-2 rounded-lg transition ${tab === "AdminMangeBooks"
-                            ? "bg-blue-100 text-blue-600 font-semibold"
-                            : "text-gray-700 hover:bg-gray-100"
-                            }`}
-                    >
-                        <HiUser className="w-5 h-5 mr-3" />
-                        <span>Manage Books</span>
-                        <span className="ml-auto text-xs text-gray-500">{userRole}</span>
-                    </Link>
-                </li>
-
-                {isAdmin && (
-                    <li>
-                        <Link
-                            to="/dashboard?tab=AdminLibrary"
-                            className={`flex items-center px-3 py-2 rounded-lg transition ${tab === "AdminLibrary"
-                                ? "bg-blue-100 text-blue-600 font-semibold"
-                                : "text-gray-700 hover:bg-gray-100"
-                                }`}
-                        >
-                            <HiDocumentText className="w-5 h-5 mr-3" />
-                            <span>My Library</span>
-                        </Link>
-                    </li>
-                )}
-
-                {/* Optional extra routes */}
-                {isAdmin && (
-                    <>
-                        <li>
+            {/* Navigation */}
+            <nav className="flex-1">
+                <ul>
+                    {navItems.map((item, index) => (
+                        <li key={index} className="mb-1">
                             <Link
-                                to="/dashboard?tab=users"
-                                className={`flex items-center px-3 py-2 rounded-lg transition ${tab === "users"
-                                    ? "bg-blue-100 text-blue-600 font-semibold"
-                                    : "text-gray-700 hover:bg-gray-100"
+                                to={item.path}
+                                className={`flex items-center p-3 rounded-lg transition-all duration-300 hover:bg-[rgba(255,255,255,0.1)] hover:translate-x-1 space-x-3 ${location.pathname + location.search === item.path
+                                    ? 'bg-[rgba(101,163,224,0.2)] border-l-4 border-[#65a3e0]'
+                                    : ''
                                     }`}
                             >
-                                <HiOutlineUserGroup className="w-5 h-5 mr-3" />
-                                <span>Users</span>
+                                <span className="text-[#65a3e0]">{item.icon}</span>
+                                <span>{item.text}</span>
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                to="/dashboard?tab=comments"
-                                className={`flex items-center px-3 py-2 rounded-lg transition ${tab === "comments"
-                                    ? "bg-blue-100 text-blue-600 font-semibold"
-                                    : "text-gray-700 hover:bg-gray-100"
-                                    }`}
-                            >
-                                <HiAnnotation className="w-5 h-5 mr-3" />
-                                <span>Comments</span>
-                            </Link>
-                        </li>
-                    </>
-                )}
+                    ))}
+                </ul>
+            </nav>
 
-                <li>
-                    <button className="flex items-center w-full px-3 py-2 text-left rounded-lg text-red-600 hover:bg-red-50 transition">
-                        <HiArrowSmRight className="w-5 h-5 mr-3" />
-                        <span>Sign Out</span>
+            {/* Footer/User */}
+            <div className="mt-auto p-3 bg-[rgba(0,0,0,0.2)] rounded-lg border-l-4 border-[#65a3e0]">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-10 h-10" />
+                        <div>
+                            <p className="font-medium">John Doe</p>
+                            <p className="text-xs text-[#a0c5e8]">Admin</p>
+                        </div>
+                    </div>
+                    <button className="text-[#65a3e0] hover:text-[#a0c5e8] transition-colors">
+                        <FaSignOutAlt />
                     </button>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     );
-}
+};
 
 export default DashSideBar;

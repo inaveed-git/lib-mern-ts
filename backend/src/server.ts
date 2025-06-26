@@ -1,34 +1,40 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import 'dotenv/config'
 import connectDB from "./config/connectDB";
 import cors from "cors"
-
-
-// Imporing the router form the route folder
+import cookieParser from "cookie-parser"
 import AuthRouter from "./routes/auth.route"
+import bookRouter from "./routes/book.route";
+
 
 const app = express();
 app.use(express.json())
+app.use(cookieParser())
 
 const corsOptions = {
-    origin: ['http://localhost:5174', 'https://myshelflib.netlify.app'], // your React frontend URL
-    credentials: true,               // allow cookies
+    origin: ['http://localhost:5173', 'https://myshelflib.netlify.app'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 };
 
 app.use(cors(corsOptions));
 
+// Remove this line: app.options('*', cors(corsOptions));
+
 connectDB()
 
-
-// Using the Routers
 app.use("/api/v1/user", AuthRouter)
+app.use("/api/v1/book", bookRouter)
+// /api/add/book
+// Error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
 
-
-
-const PORT = process.env.PORT;
-
-
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`YOUR SERVER IS RUNNING ON PORT ${PORT}`)
-})
+});

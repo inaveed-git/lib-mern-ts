@@ -1,47 +1,39 @@
-// src/App.tsx
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LibrarySection from "./components/LibrarySection";
-
-import Dashboard from "./pages/Dashboard";
 import { useRecoilValue } from "recoil";
 import { userState } from "./recoil/atoms/userAtom";
 import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminManageBooks from "./pages/AdminManageBooks";
+import PrivateRoute from "./components/PrivateRoute";
+import SuperAdmin_Admin_PrivateRoute from "./components/SuperAdmin_Admin_PrivateRoute";
+import useLoadUser from "./hook/useLoadUser";
+import AddBookForm from "./components/AddBookForm";
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
-  const user = useRecoilValue(userState);
+  useLoadUser();
+  const { user, isLoading } = useRecoilValue(userState);
 
   return (
     <BrowserRouter>
 
-      <h1>check one</h1>
+
+
       <Routes>
-        {/* Public Route: Show form if not logged in */}
-        {!user && (
-          <>
-            <Route
-              path="/"
-              element={
-                <AuthPage
+        <Route path="/" element={<AuthPage />} />
 
-                />
-              }
-            />
-            {/* Catch all redirects to / if not logged in */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </>
-        )}
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
 
-        {/* Protected Routes: Only visible if user is logged in */}
-        {user && (
-          <>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/library" element={<LibrarySection />} />
-            {/* Redirect unknown paths to dashboard */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </>
-        )}
+        <Route element={<SuperAdmin_Admin_PrivateRoute />}>
+          <Route path="/create-book" element={<AddBookForm />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/AdminLibrary" element={<AdminManageBooks />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to={user ? "/dashboard" : "/"} replace />} />
       </Routes>
     </BrowserRouter>
   );
