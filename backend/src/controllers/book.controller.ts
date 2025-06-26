@@ -10,6 +10,12 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
     let filePath = "";
 
     try {
+
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+        const userId = req.user._id;
+
         const { title, author, genre, publishedYear, publisher } = req.body;
 
         if (!title || !author || !genre || !publishedYear || !publisher) {
@@ -80,7 +86,7 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
             publisher,
             coverImage: coverImageResponse.secure_url,
             bookFile: fileResponse.secure_url,
-            userId: req.user.id,
+            userId: userId,
         });
 
         await newBook.save();
@@ -121,11 +127,14 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
 export const getUserBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const books = await Book.find({ userId: req.user._id }).sort({ createdAt: -1 });
-        // You can also limit or paginate here if needed
         if (!req.user?._id) {
-            return res.status(401).json({ success: false, message: "Unauthorized" });
+            res.status(401).json({ success: false, message: "Unauthorized" });
+            return
         }
+
+        const books = await Book.find({ userId: req.user._id.toString() }).sort({ createdAt: -1 });
+        // You can also limit or paginate here if needed
+
 
         res.status(200).json({
             success: true,

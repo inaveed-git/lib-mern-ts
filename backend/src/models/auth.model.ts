@@ -1,16 +1,15 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import bcrypt from "bcryptjs"
 
 
 export interface Iuser extends Document {
+    _id: Types.ObjectId; // Explicitly define as ObjectId
     username: string;
     email: string;
     password: string;
     isSuperAdmin: boolean;
     matchPassword: (matchPassword: string) => Promise<boolean>;
-
 }
-
 
 const userSchema = new mongoose.Schema<Iuser>({
     username: { type: String, required: true, unique: true, trim: true },

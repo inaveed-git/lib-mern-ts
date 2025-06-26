@@ -8,11 +8,12 @@ import bookRouter from "./routes/book.route";
 
 
 const app = express();
-app.use(express.json())
 app.use(cookieParser())
+app.use(express.json())
 
 const corsOptions = {
     origin: ['http://localhost:5173', 'https://myshelflib.netlify.app'],
+
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['GET', 'POST', 'PUT', 'DELETE']
@@ -37,4 +38,13 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`YOUR SERVER IS RUNNING ON PORT ${PORT}`)
+});
+
+
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(error);
+    res.status(500).json({
+        success: false,
+        message: error.message || "Something went wrong"
+    });
 });

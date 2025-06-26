@@ -12,7 +12,7 @@ export interface IBook extends Document {
 
     coverImage?: string;
     bookFile?: string;
-    userId: Types.ObjectId;
+    userId: Types.ObjectId | string;
 }
 
 const BookSchema = new Schema<IBook>({
