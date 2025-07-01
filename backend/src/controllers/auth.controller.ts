@@ -59,3 +59,27 @@ export const sigin = async (req: Request, res: Response, next: NextFunction): Pr
         next(error);
     }
 };
+
+
+
+export const signout = async (req: Request, res: Response): Promise<void> => {
+    try {
+        // Clear the authentication cookie
+        res.clearCookie('token', {
+            httpOnly: true,
+
+            sameSite: 'strict',
+            path: '/',
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Signed out successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to sign out",
+        });
+    }
+};

@@ -4,6 +4,16 @@ import { useSetRecoilState, useRecoilValue } from "recoil";
 import type { UserType } from "../recoil/atoms/userAtom";
 import { userState } from "../recoil/atoms/userAtom";
 import { useNavigate } from "react-router-dom";
+import {
+    FaEnvelope,
+    FaLock,
+    FaUser,
+    FaEye,
+    FaEyeSlash,
+    FaBookOpen,
+    FaSignInAlt,
+    FaPlusCircle
+} from "react-icons/fa";
 
 interface FormSectionProps {
     activeTab: "signin" | "signup";
@@ -113,10 +123,15 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                         } animate-fadeIn`}
                     onSubmit={handleSignInSubmit}
                 >
-                    <h2 className="text-2xl text-[#f8fafc] mb-6">Access Your Library</h2>
+                    <h2 className="text-2xl text-[#f8fafc] mb-6 flex items-center gap-2">
+                        <FaBookOpen className="text-[#65a3e0]" />
+                        Access Your Library
+                    </h2>
 
                     <div className="mb-5 relative">
-                        <i className="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"></i>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]">
+                            <FaEnvelope />
+                        </div>
                         <input
                             type="email"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
@@ -129,7 +144,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                     </div>
 
                     <div className="mb-5 relative">
-                        <i className="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"></i>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]">
+                            <FaLock />
+                        </div>
                         <input
                             type={showSignInPassword ? "text" : "password"}
                             className="w-full py-3 pl-12 pr-12 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
@@ -144,10 +161,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"
                             onClick={() => setShowSignInPassword(!showSignInPassword)}
                         >
-                            <i
-                                className={`fas ${showSignInPassword ? "fa-eye-slash" : "fa-eye"
-                                    }`}
-                            ></i>
+                            {showSignInPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
 
@@ -162,8 +176,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
                     <button
                         type="submit"
-                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
                     >
+                        <FaSignInAlt />
                         Access My Library
                     </button>
 
@@ -185,10 +200,15 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                         } animate-fadeIn`}
                     onSubmit={handleSignUpSubmit}
                 >
-                    <h2 className="text-2xl text-[#f8fafc] mb-6">Create Your Library</h2>
+                    <h2 className="text-2xl text-[#f8fafc] mb-6 flex items-center gap-2">
+                        <FaPlusCircle className="text-[#65a3e0]" />
+                        Create Your Library
+                    </h2>
 
                     <div className="mb-5 relative">
-                        <i className="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"></i>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]">
+                            <FaUser />
+                        </div>
                         <input
                             type="text"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
@@ -201,7 +221,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                     </div>
 
                     <div className="mb-5 relative">
-                        <i className="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"></i>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]">
+                            <FaEnvelope />
+                        </div>
                         <input
                             type="email"
                             className="w-full py-3 pl-12 pr-4 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
@@ -214,7 +236,9 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                     </div>
 
                     <div className="mb-5 relative">
-                        <i className="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"></i>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]">
+                            <FaLock />
+                        </div>
                         <input
                             type={showSignUpPassword ? "text" : "password"}
                             className="w-full py-3 pl-12 pr-12 border border-[#2d3748] rounded-lg text-[#f1f5f9] bg-[rgba(26,32,44,0.7)] focus:border-[#65a3e0] focus:ring-2 focus:ring-[rgba(101,163,224,0.1)] outline-none transition-all"
@@ -229,17 +253,15 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#a0aec0]"
                             onClick={() => setShowSignUpPassword(!showSignUpPassword)}
                         >
-                            <i
-                                className={`fas ${showSignUpPassword ? "fa-eye-slash" : "fa-eye"
-                                    }`}
-                            ></i>
+                            {showSignUpPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
                     >
+                        <FaPlusCircle />
                         Create My Library
                     </button>
 

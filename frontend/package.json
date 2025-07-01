@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "prebuild": "cp public/_redirects dist/_redirects || true",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.4",
     "@tailwindcss/vite": "^4.1.10",
     "axios": "^1.10.0",
     "react": "^18.2.0",

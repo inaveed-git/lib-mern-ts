@@ -1,7 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-interface tForm {
+interface Library {
+    _id: string;
+    name: string;
+}
+
+interface FormData {
     title: string;
     author: string;
     genre: string;
@@ -9,10 +14,15 @@ interface tForm {
     publisher: string;
     coverImage: File | null;
     bookFile: File | null;
+    libraries: string[];
+    isPublic: boolean;
 }
 
 const AddBookForm: React.FC = () => {
-    const [formData, setFormData] = useState<tForm>({
+
+
+
+    const [formData, setFormData] = useState<FormData>({
         title: "",
         author: "",
         genre: "",
@@ -20,14 +30,37 @@ const AddBookForm: React.FC = () => {
         publisher: "",
         coverImage: null,
         bookFile: null,
+        libraries: [],
+        isPublic: false
     });
 
+    const [libraries, setLibraries] = useState<Library[]>([]);
     const [progress, setProgress] = useState(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [loadingLibraries, setLoadingLibraries] = useState(true);
 
     const coverImageRef = useRef<HTMLInputElement>(null);
     const fileRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const fetchLibraries = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/v1/library/my-libraries`,
+                    { withCredentials: true }
+                );
+                setLibraries(response.data.data || []);
+            } catch (error) {
+                console.error("Error fetching libraries:", error);
+                setErrorMessage("Failed to load your libraries. You can still add the book.");
+            } finally {
+                setLoadingLibraries(false);
+            }
+        };
+
+        fetchLibraries();
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
@@ -35,6 +68,9 @@ const AddBookForm: React.FC = () => {
         if (type === "file") {
             const file = (e.target as HTMLInputElement).files?.[0] || null;
             setFormData((prev) => ({ ...prev, [name]: file }));
+        } else if (type === "checkbox") {
+            const checked = (e.target as HTMLInputElement).checked;
+            setFormData((prev) => ({ ...prev, [name]: checked }));
         } else {
             setFormData((prev) => ({
                 ...prev,
@@ -43,13 +79,32 @@ const AddBookForm: React.FC = () => {
         }
     };
 
+    const handleLibraryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const libraryId = e.target.value;
+        const isChecked = e.target.checked;
+
+        setFormData(prev => {
+            if (isChecked) {
+                return {
+                    ...prev,
+                    libraries: [...prev.libraries, libraryId]
+                };
+            } else {
+                return {
+                    ...prev,
+                    libraries: prev.libraries.filter(id => id !== libraryId)
+                };
+            }
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const { title, author, genre, publishedYear, publisher, coverImage, bookFile } = formData;
 
         if (!title || !author || !genre || !publishedYear || !publisher || !coverImage || !bookFile) {
-            setErrorMessage("Please fill in all fields.");
+            setErrorMessage("Please fill in all required fields.");
             return;
         }
 
@@ -61,6 +116,12 @@ const AddBookForm: React.FC = () => {
             data.append("genre", genre);
             data.append("publishedYear", String(publishedYear));
             data.append("publisher", publisher);
+            data.append("isPublic", String(formData.isPublic));
+
+            // Append libraries
+            formData.libraries.forEach(libraryId => {
+                data.append("libraries", libraryId);
+            });
 
             // Files
             data.append("coverImage", coverImage);
@@ -81,7 +142,7 @@ const AddBookForm: React.FC = () => {
                 }
             );
 
-            setSuccessMessage(response.data.message);
+            setSuccessMessage(response.data.message || "Book added successfully!");
             setErrorMessage(null);
 
             // Reset form
@@ -93,24 +154,27 @@ const AddBookForm: React.FC = () => {
                 publisher: "",
                 coverImage: null,
                 bookFile: null,
+                libraries: [],
+                isPublic: false
             });
 
             if (coverImageRef.current) coverImageRef.current.value = "";
             if (fileRef.current) fileRef.current.value = "";
-            setProgress(0);
         } catch (error: any) {
             setErrorMessage(
                 error?.response?.data?.message ||
                 error?.message ||
-                "An error occurred while adding the book"
+                "An unexpected error occurred while adding the book. Please try again."
             );
             setSuccessMessage(null);
+        } finally {
+            setProgress(0);
         }
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-8 bg-white rounded-xl shadow-lg">
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Add New Book</h2>
+        <div className="max-w-4xl mx-auto p-6 bg-white text-black rounded-xl shadow-lg">
+            <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Add New Book</h2>
 
             {errorMessage && (
                 <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6 flex items-center">
@@ -130,7 +194,7 @@ const AddBookForm: React.FC = () => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6 text-black">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
@@ -143,6 +207,7 @@ const AddBookForm: React.FC = () => {
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Book Title"
+                            required
                         />
                     </div>
 
@@ -157,6 +222,7 @@ const AddBookForm: React.FC = () => {
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Author Name"
+                            required
                         />
                     </div>
                 </div>
@@ -173,6 +239,7 @@ const AddBookForm: React.FC = () => {
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Fiction, Science, etc."
+                            required
                         />
                     </div>
 
@@ -189,6 +256,7 @@ const AddBookForm: React.FC = () => {
                             placeholder="2023"
                             min="1000"
                             max={new Date().getFullYear()}
+                            required
                         />
                     </div>
                 </div>
@@ -204,6 +272,7 @@ const AddBookForm: React.FC = () => {
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Publisher Name"
+                        required
                     />
                 </div>
 
@@ -216,13 +285,16 @@ const AddBookForm: React.FC = () => {
                             <label className="flex flex-col w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                     <svg className="w-8 h-8 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 极 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
-                                    <p className="text-sm text-gray-500">
+                                    <p className={`text-sm ${formData.coverImage ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
                                         {formData.coverImage
                                             ? formData.coverImage.name
                                             : "Click to upload cover image"}
                                     </p>
+                                    {formData.coverImage && (
+                                        <p className="text-xs text-gray-500 mt-1">Click to change</p>
+                                    )}
                                 </div>
                                 <input
                                     type="file"
@@ -247,11 +319,14 @@ const AddBookForm: React.FC = () => {
                                     <svg className="w-8 h-8 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                     </svg>
-                                    <p className="text-sm text-gray-500">
+                                    <p className={`text-sm ${formData.bookFile ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
                                         {formData.bookFile
                                             ? formData.bookFile.name
                                             : "Click to upload PDF file"}
                                     </p>
+                                    {formData.bookFile && (
+                                        <p className="text-xs text-gray-500 mt-1">Click to change</p>
+                                    )}
                                 </div>
                                 <input
                                     type="file"
@@ -265,6 +340,61 @@ const AddBookForm: React.FC = () => {
                             </label>
                         </div>
                     </div>
+                </div>
+
+                <div className="space-y-4 pt-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                        Add to Libraries
+                    </label>
+
+                    {loadingLibraries ? (
+                        <div className="flex items-center text-gray-500">
+                            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500 mr-2"></div>
+                            Loading your libraries...
+                        </div>
+                    ) : libraries.length === 0 ? (
+                        <p className="text-gray-500 text-sm">
+                            You haven't created any libraries yet. Create a library first to add books to it.
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {libraries.map(library => (
+                                <div key={library._id} className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        id={`library-${library._id}`}
+                                        value={library._id}
+                                        checked={formData.libraries.includes(library._id)}
+                                        onChange={handleLibraryChange}
+                                        className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                                    />
+                                    <label
+                                        htmlFor={`library-${library._id}`}
+                                        className="ml-2 text-sm text-gray-700"
+                                    >
+                                        {library.name}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="flex items-center pt-2">
+                    <input
+                        type="checkbox"
+                        id="isPublic"
+                        name="isPublic"
+                        checked={formData.isPublic}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-blue-600 rounded focus:ring-blue-500"
+                    />
+                    <label
+                        htmlFor="isPublic"
+                        className="ml-2 text-sm text-gray-700"
+                    >
+                        Make this book public
+                    </label>
                 </div>
 
                 {progress > 0 && (
@@ -282,7 +412,7 @@ const AddBookForm: React.FC = () => {
                     </div>
                 )}
 
-                <div className="flex justify-center mt-8">
+                <div className="flex justify-center pt-6">
                     <button
                         type="submit"
                         disabled={progress > 0 && progress < 100}

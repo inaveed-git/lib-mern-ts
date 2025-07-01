@@ -1,5 +1,6 @@
 import express, { RequestHandler } from 'express';
-import { addBook, getUserBooks } from '../controllers/book.controller';
+import { addBook, getDashboardStats, getUserBooks } from '../controllers/book.controller';
+import { updateBookVisibility, getLibraryBooks } from "../controllers/book.controller";
 import { upload } from '../middlewares/multer.middleware';
 import verifyToken from '../middlewares/verifyToken';
 
@@ -14,7 +15,14 @@ bookRouter.post("/add", verifyToken, upload.fields(
 ), addBook as RequestHandler);
 
 
-bookRouter.get("/my-books", verifyToken, getUserBooks);
+bookRouter.get("/dashboard-stats", verifyToken, getDashboardStats as RequestHandler);
+bookRouter.get("/my-books", verifyToken, getUserBooks as RequestHandler);
+
+
+
+// Add these to your existing routes
+bookRouter.put("/:bookId/visibility", verifyToken, updateBookVisibility as RequestHandler);
+// bookRouter.get("/library/:libraryId", getLibraryBooks);
 
 // bookRouter.get("/check", verifyToken, (req, res) => {
 //     console.log(req.user.id, "this is the first check")

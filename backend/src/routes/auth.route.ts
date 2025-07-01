@@ -1,11 +1,15 @@
-import express from "express";
-import { sigin, sigup } from "../controllers/auth.controller";
+import express, { RequestHandler } from "express";
+import { sigin, signout, sigup } from "../controllers/auth.controller";
 import verifyToken from "../middlewares/verifyToken";
 
 const router = express.Router();
 
 router.post("/signup", sigup);
 router.post("/signin", sigin);
+
+
+router.get('/signout', signout); // Add this new route
+
 
 router.get('/me', verifyToken, (req, res) => {
     if (req.user) {

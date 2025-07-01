@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema<Iuser>({
         type: Boolean,
         default: false,
         immutable: true,
-        private: true
+
     },
 }, { timestamps: true })
 
