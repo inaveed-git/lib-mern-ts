@@ -10,10 +10,10 @@ This is a **full-stack AI-powered book library system** built using **TypeScript
 
 ## 📸 Screenshots
 
-frontend/screenshots/screenone1.PNG
-frontend/screenshots/screen2.PNG
-frontend/screenshots/screen3.PNG
-frontend/screenshots/screen4.PNG
+![Chat UI Preview](frontend/screenshots/screenone1.PNG)
+![Chat UI Preview](frontend/screenshots/screen2.PNG)
+![Chat UI Preview](frontend/screenshots/screen3.PNG)
+![Chat UI Preview](frontend/screenshots/screen4.PNG)
 
 ---
 
