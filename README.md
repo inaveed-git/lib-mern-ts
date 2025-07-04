@@ -197,7 +197,7 @@ For questions, support, or collaboration, feel free to reach out:
 
 MIT License
 
-This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the **MIT License** – see the [MIT License](./LICENSE) file for details.
 
 &copy; 2025 [Naveed Khan](https://github.com/inaveed-git)
 
