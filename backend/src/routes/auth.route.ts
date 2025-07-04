@@ -8,7 +8,7 @@ router.post("/signup", sigup);
 router.post("/signin", sigin);
 
 
-router.get('/signout', signout); // Add this new route
+router.get('/signout', signout);
 
 
 router.get('/me', verifyToken, (req, res) => {

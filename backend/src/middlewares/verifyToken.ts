@@ -15,10 +15,16 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction): Pro
         const token = req.cookies.token;
 
         if (!token) {
-            return next(); // Continue without user
+            return next();
         }
 
-        const decoded = jwt.verify(token, "thesecretkey") as { id: string };
+
+        if (!process.env.JWTSECRET) {
+            throw new Error("JWT secret is not defined");
+        }
+
+
+        const decoded = jwt.verify(token, process.env.JWTSECRET) as { id: string };
         const user = await User.findById(decoded.id).select("-password");
 
         if (user) {
@@ -27,7 +33,7 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction): Pro
 
         next();
     } catch (error) {
-        // Continue even if token is invalid
+
         next();
     }
 };

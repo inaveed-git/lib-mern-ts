@@ -5,6 +5,10 @@ import { useRecoilValue } from 'recoil';
 import { userState } from '../recoil/atoms/userAtom';
 import { FaTrash, FaUser, FaBook, FaLink } from 'react-icons/fa';
 import { IoIosRefreshCircle } from 'react-icons/io';
+import { IoCloseCircleSharp } from "react-icons/io5";
+import { Link } from "react-router-dom";
+
+
 
 interface User {
     _id: string;
@@ -152,12 +156,21 @@ const SuperAdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#1e3a5f] to-[#2d5182] p-4 md:p-8">
+
             <div className="max-w-7xl mx-auto">
-                <div className="bg-[rgba(26,32,44,0.8)] rounded-xl shadow-lg p-6 border border-[#2d3e50] backdrop-blur-md mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
-                        <FaLink className="text-[#65a3e0] mr-3" />
-                        Super Admin Dashboard
-                    </h1>
+
+
+
+                <div className="relative bg-[rgba(26,32,44,0.8)] rounded-xl shadow-lg p-6 border border-[#2d3e50] backdrop-blur-md mb-8">
+                    <div className='flex justify-between'>
+                        <h1 className="text-3xl font-bold text-white mb-2 flex items-center">
+                            <FaLink className="text-[#65a3e0] mr-3" />
+                            Super Admin Dashboard
+                        </h1>
+
+                        <Link to="/dashboard?tab=AdminDash"> <span className="text-blue-400 text-3xl"> <IoCloseCircleSharp /> </span></Link>
+
+                    </div>
                     <p className="text-[#a0aec0] mb-6">
                         Manage all users and books in the system. Organize, monitor and control access to resources.
                     </p>

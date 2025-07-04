@@ -1,8 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 
-// import { Tcloudinary } from "../types/book.type";
 
-// Configure Cloudinary with environment variables
 cloudinary.config({
 
 
@@ -26,7 +24,7 @@ interface Tcloudinary {
     format: string | undefined;
 }
 
-// Utility function to upload a file to Cloudinary
+
 const uploadOnCloudinary = async (data: Tcloudinary) => {
 
 
@@ -37,24 +35,24 @@ const uploadOnCloudinary = async (data: Tcloudinary) => {
 
 
 
-        // Prepare the upload options
+
         const options = {
-            resource_type: data.resource_type || "auto", // Specify resource type (image, video, etc.)
-            public_id: data.fileName,   // Custom file name
-            folder: data.folder, // Upload folder
-            format: data.format, // Optional: enforce a specific format
+            resource_type: data.resource_type || "auto",
+            public_id: data.fileName,
+            folder: data.folder,
+            format: data.format,
         };
 
-        // Upload the file to Cloudinary
+
         const response = await cloudinary.uploader.upload(data.localPath, options);
 
-        console.log("File uploaded to Cloudinary:", response.secure_url);
+
 
         return response;
     } catch (error) {
         console.error("Cloudinary upload error:", error);
 
-        // Clean up temporary files on error
+
 
 
         return null;

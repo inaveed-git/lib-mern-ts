@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil/atoms/userAtom";
 import { FaShare, FaCheck } from "react-icons/fa";
+import { usePageTitle } from "../hook/usePageTitle";
 
 interface Book {
     _id: string;
@@ -32,6 +33,9 @@ interface Library {
 }
 
 const LibraryDetailsPage: React.FC = () => {
+
+    usePageTitle("Library")
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const libraryId = queryParams.get("libraryId");
@@ -399,7 +403,7 @@ const LibraryDetailsPage: React.FC = () => {
                                                     {book.genre}
                                                 </span>
                                                 <span className="text-xs bg-gray-700 text-gray-300 px-2.5 py-0.5 rounded">
-                                                    {book.publishedYear}
+                                                    a {book.publishedYear}
                                                 </span>
                                                 {!book.isPublic && (
                                                     <span className="text-xs bg-amber-900/50 text-amber-100 px-2.5 py-0.5 rounded">
@@ -412,28 +416,16 @@ const LibraryDetailsPage: React.FC = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="mt-4 flex justify-between items-center">
+                                    <div className="mt-4 flex justify-between items-center cursor-pointer ">
                                         <a
-                                            href={book.bookFile}
+                                            href={`${import.meta.env.VITE_API_URL}/api/v1/book/download/${book._id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-blue-400 hover:text-blue-300 font-medium flex items-center text-sm"
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="h-4 w-4 mr-1"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                                                />
-                                            </svg>
+                                            {/* ... download icon */}
                                             Download
+                                            {/* {`${book.bookFile}`} */}
                                         </a>
 
                                         <div className="relative">

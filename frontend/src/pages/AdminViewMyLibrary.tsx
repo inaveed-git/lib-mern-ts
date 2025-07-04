@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { usePageTitle } from "../hook/usePageTitle";
 
 interface tForm {
     title: string;
@@ -19,6 +20,9 @@ interface Library {
 }
 
 const AdminViewMyLibrary: React.FC = () => {
+
+    usePageTitle("Library")
+
     const [formData, setFormData] = useState<tForm>({
         title: "",
         author: "",

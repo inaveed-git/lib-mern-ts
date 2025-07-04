@@ -4,8 +4,11 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 // import { userState } from "../recoil/atoms/userAtom";
 import { userState } from "../recoil/atoms/userAtom";
+import { usePageTitle } from "../hook/usePageTitle";
 
 const CreateLibraryPage: React.FC = () => {
+
+    usePageTitle("New Library")
     const { user } = useRecoilValue(userState);
     const navigate = useNavigate();
     const [formData, setFormData] = useState({

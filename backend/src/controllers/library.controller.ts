@@ -3,7 +3,7 @@ import Library, { ILibrary } from "../models/library.model";
 import Book, { IBook } from "../models/book.model";
 import mongoose, { Types } from "mongoose";
 
-// Create a library
+
 export const createLibrary = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, description, isPublic } = req.body;
@@ -33,7 +33,7 @@ export const createLibrary = async (req: Request, res: Response, next: NextFunct
     }
 };
 
-// Get all libraries for a user
+
 export const getUserLibraries = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.user || !req.user._id) {
@@ -56,7 +56,7 @@ export const getUserLibraries = async (req: Request, res: Response, next: NextFu
         });
     }
 };
-// ✅ Add book to library
+
 export const addBookToLibrary = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { libraryId, bookId } = req.params;
@@ -66,7 +66,7 @@ export const addBookToLibrary = async (req: Request, res: Response, next: NextFu
             return
         }
 
-        // ✅ Use generic <ILibrary> to tell TS the shape of the returned doc
+
         const library = await Library.findById<ILibrary>(libraryId);
         if (!library) {
             res.status(404).json({ success: false, message: "Library not found" });
@@ -78,7 +78,7 @@ export const addBookToLibrary = async (req: Request, res: Response, next: NextFu
             return
         }
 
-        // ✅ Use generic <IBook> here too
+
         const book = await Book.findById<IBook>(bookId);
         if (!book) {
             res.status(404).json({ success: false, message: "Book not found" });
@@ -110,7 +110,7 @@ export const addBookToLibrary = async (req: Request, res: Response, next: NextFu
     }
 };
 
-// Get public or authorized library details
+
 export const getLibraryDetails = async (req: Request, res: Response) => {
     try {
         const { libraryId } = req.params;
@@ -122,7 +122,7 @@ export const getLibraryDetails = async (req: Request, res: Response) => {
             return
         }
 
-        // Public library access check
+
         if (!library.isPublic) {
             if (!req.user || req.user._id.toString() !== library.admin.toString()) {
                 res.status(403).json({ success: false, message: "Not authorized" });
@@ -130,7 +130,6 @@ export const getLibraryDetails = async (req: Request, res: Response) => {
             }
         }
 
-        // Conditionally populate books
         const bookQuery = library.isPublic ?
             { isPublic: true } :
             {};
@@ -170,7 +169,7 @@ export const updateLibraryVisibility = async (req: Request, res: Response) => {
             return
         }
 
-        // Check ownership
+
         if (library.admin.toString() !== req.user._id.toString()) {
             res.status(403).json({ success: false, message: "Not authorized" });
             return

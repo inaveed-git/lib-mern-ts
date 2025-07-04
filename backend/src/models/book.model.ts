@@ -9,8 +9,8 @@ export interface IBook extends Document {
     coverImage?: string;
     bookFile?: string;
     userId: Types.ObjectId;
-    libraries: Types.ObjectId[]; // Add this field
-    isPublic: boolean; // Add this field
+    libraries: Types.ObjectId[];
+    isPublic: boolean;
 }
 
 const BookSchema = new Schema<IBook>({
@@ -22,11 +22,11 @@ const BookSchema = new Schema<IBook>({
     coverImage: { type: String },
     bookFile: { type: String },
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    libraries: [{  // New field
+    libraries: [{
         type: Schema.Types.ObjectId,
         ref: "Library"
     }],
-    isPublic: {  // New field
+    isPublic: {
         type: Boolean,
         default: false
     }

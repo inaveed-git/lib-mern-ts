@@ -1,4 +1,4 @@
-// src/index.ts
+
 import express, { NextFunction, Request, Response } from "express";
 import 'dotenv/config'
 import connectDB from "./config/connectDB";
@@ -6,7 +6,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import AuthRouter from "./routes/auth.route"
 import bookRouter from "./routes/book.route";
-import libraryRouter from "./routes/library.route"; // Renamed for consistency
+import libraryRouter from "./routes/library.route";
 import userRouter from "./routes/user.route"
 const app = express();
 app.use(cookieParser())
@@ -24,10 +24,10 @@ connectDB();
 
 app.use("/api/v1/user", AuthRouter);
 app.use("/api/v1/book", bookRouter);
-app.use("/api/v1/library", libraryRouter); // Changed to /api/v1/library
+app.use("/api/v1/library", libraryRouter);
 app.use("/api/v1/user", userRouter)
 
-// Error handlers
+
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({ error: 'Internal Server Error' });

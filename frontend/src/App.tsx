@@ -16,6 +16,10 @@ import LibraryDetailsPage from "./pages/LibraryDetailsPage";
 import CreateLibraryPage from "./pages/CreateLibraryPage";
 import AddBooksToLibraryPage from "./pages/AddBooksToLibraryPage";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import Navbar from "./components/Navbar";
+import Layout from "./pages/Layout";
+import LibrariesPage from "./pages/LibrariesPage";
+import AboutPage from "./pages/AboutPage";
 
 const App: React.FC = () => {
   useLoadUser();
@@ -33,12 +37,22 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<AuthPage />} />
+
+
+        <Route element={<Layout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/lib" element={<LibrariesPage />} />
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          {/* <Route path="/libraries" element={<LibrariesPage />} /> */}
+          <Route path="/login" element={<AuthPage />} />
+        </Route>
+
+
+        {/* <Route path="/" element={<Navbar />} /> */}
+        {/* <Route path="/home" element={<HomePage />} /> */}
 
         <Route element={<PrivateRoute />}>
-
-
 
 
 

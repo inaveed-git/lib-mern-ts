@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil/atoms/userAtom";
 import { FaShare, FaCheck } from "react-icons/fa";
+import { usePageTitle } from "../hook/usePageTitle";
 
 interface Library {
     _id: string;
@@ -24,6 +25,9 @@ interface Book {
 }
 
 const BookList: React.FC = () => {
+
+
+    usePageTitle("Books")
     const { user } = useRecoilValue(userState);
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);

@@ -12,7 +12,8 @@ import {
     FaEyeSlash,
     FaBookOpen,
     FaSignInAlt,
-    FaPlusCircle
+    FaPlusCircle,
+    FaSpinner
 } from "react-icons/fa";
 
 interface FormSectionProps {
@@ -26,6 +27,8 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
     const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
     const setAuthState = useSetRecoilState(userState);
     const { user } = useRecoilValue(userState);
+    const [isSignInLoading, setIsSignInLoading] = useState(false);
+    const [isSignUpLoading, setIsSignUpLoading] = useState(false);
 
     const [signupData, setSignupData] = useState({
         username: "",
@@ -38,10 +41,10 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
         password: "",
     });
 
-    // Redirect to dashboard if user is already authenticated
+
     useEffect(() => {
         if (user) {
-            navigate("/dashboard");
+            navigate("/dashboard?tab=AdminDash");
         }
     }, [user, navigate]);
 
@@ -52,6 +55,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
     const handleSignInSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSignInLoading(true);
         try {
             const response = await axios.post<{ user: UserType }>(
                 `${import.meta.env.VITE_API_URL}/api/v1/user/signin`,
@@ -59,7 +63,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
                 { withCredentials: true }
             );
 
-            // Update auth state with the new user
+
             setAuthState({
                 user: response.data.user,
                 isLoading: false
@@ -71,6 +75,8 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
         } catch (error) {
             console.error("Sign-in error:", error);
             // Optionally show error message to user
+        } finally {
+            setIsSignInLoading(false);
         }
     };
 
@@ -81,6 +87,7 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
     const handleSignUpSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSignUpLoading(true);
         try {
             await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/v1/user/signup`,
@@ -88,12 +95,14 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
             );
             setActiveTab("signin");
 
-            // Clear sign-up form data
+
             setSignupData({ username: "", email: "", password: "" });
 
         } catch (error) {
             console.error("Signup error:", error);
-            // Optionally show error message to user
+
+        } finally {
+            setIsSignUpLoading(false);
         }
     };
 
@@ -176,10 +185,21 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
                     <button
                         type="submit"
-                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                        disabled={isSignInLoading}
+                        className={`w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 ${isSignInLoading ? "opacity-75 cursor-not-allowed" : "hover:-translate-y-0.5"
+                            }`}
                     >
-                        <FaSignInAlt />
-                        Access My Library
+                        {isSignInLoading ? (
+                            <>
+                                <FaSpinner className="animate-spin" />
+                                Accessing...
+                            </>
+                        ) : (
+                            <>
+                                <FaSignInAlt />
+                                Access My Library
+                            </>
+                        )}
                     </button>
 
                     <p className="text-center text-[#a0aec0] text-sm mt-7">
@@ -259,10 +279,21 @@ const FormSection: React.FC<FormSectionProps> = ({ activeTab, setActiveTab }) =>
 
                     <button
                         type="submit"
-                        className="w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                        disabled={isSignUpLoading}
+                        className={`w-full py-3 bg-gradient-to-r from-[#3a7bd5] to-[#65a3e0] text-white rounded-lg font-semibold shadow-lg hover:from-[#2a5faf] hover:to-[#3a7bd5] hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 ${isSignUpLoading ? "opacity-75 cursor-not-allowed" : "hover:-translate-y-0.5"
+                            }`}
                     >
-                        <FaPlusCircle />
-                        Create My Library
+                        {isSignUpLoading ? (
+                            <>
+                                <FaSpinner className="animate-spin" />
+                                Creating...
+                            </>
+                        ) : (
+                            <>
+                                <FaPlusCircle />
+                                Create My Library
+                            </>
+                        )}
                     </button>
 
                     <p className="text-center text-[#a0aec0] text-sm mt-7">

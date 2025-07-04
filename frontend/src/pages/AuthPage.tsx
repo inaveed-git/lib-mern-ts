@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import LibrarySection from '../components/LibrarySection'
 import FormSection from '../components/FormSection'
+import { usePageTitle } from '../hook/usePageTitle'
 
 const AuthPage: React.FC = () => {
-
+    usePageTitle("Auth Page")
     const [activeTab, setActiveTab] = useState("signin");
 
     return (

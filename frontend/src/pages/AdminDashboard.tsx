@@ -3,6 +3,8 @@ import { FaBook, FaBookOpen } from 'react-icons/fa6'
 import axios from 'axios'
 import { useRecoilValue } from 'recoil'
 import { userState } from '../recoil/atoms/userAtom'
+import { usePageTitle } from '../hook/usePageTitle';
+
 
 interface DashboardStats {
     userBookCount: number;
@@ -12,6 +14,9 @@ interface DashboardStats {
 }
 
 const AdminDashboard = () => {
+
+    usePageTitle("DashBoard")
+
     const { user } = useRecoilValue(userState);
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -75,9 +80,11 @@ const AdminDashboard = () => {
     return (
         <>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
                 {/* User's Books */}
                 <div className="bg-[rgba(26,32,44,0.7)] rounded-xl p-5 border-l-4 border-[#65a3e0]">
                     <div className="flex justify-between items-center">
+                        {/* <span className="text-9xl bg-red-600">check</span> */}
                         <div>
                             <p className="text-[#a0aec0]">Your Books</p>
                             <p className="text-3xl font-bold">

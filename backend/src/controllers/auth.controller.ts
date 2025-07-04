@@ -6,7 +6,7 @@ import { Types } from "mongoose";
 
 
 
-// auth.controller.ts
+
 export const sigup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { username, email, password } = req.body;
@@ -64,11 +64,11 @@ export const sigin = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const signout = async (req: Request, res: Response): Promise<void> => {
     try {
-        // Clear the authentication cookie
+
         res.clearCookie('token', {
             httpOnly: true,
 
-            sameSite: 'strict',
+
             path: '/',
         });
 

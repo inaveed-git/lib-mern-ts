@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glow Effect -->
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#FFD700" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="256" cy="256" r="220" fill="url(#glow)"/>
+  <!-- Book Cover -->
+  <path d="M128 128 H384 V320 C384 352 352 384 320 384 H192 C160 384 128 352 128 320 V128 Z" fill="#2B5DCA" rx="16"/>
+  <!-- Pages -->
+  <path d="M192 128 V320 C192 336 208 352 224 352 H288 C304 352 320 336 320 320 V128" fill="#FFFFFF" rx="8"/>
+  <!-- Neural Network Pattern (Curved) -->
+  <path d="M208 160 C240 160 272 192 304 192 C272 192 240 224 208 224 C240 224 272 256 304 256" stroke="#00C1FF" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="208" cy="160" r="6" fill="#FFD700"/>
+  <circle cx="304" cy="192" r="6" fill="#FFD700"/>
+  <circle cx="208" cy="224" r="6" fill="#FFD700"/>
+  <circle cx="304" cy="256" r="6" fill="#FFD700"/>
+  <!-- Spine Accent -->
+  <rect x="248" y="128" width="16" height="192" fill="#FFD700" rx="4"/>
+</svg>

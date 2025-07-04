@@ -11,8 +11,15 @@ export const handleTokenDelivery = (res: Response, token: string): void => {
 };
 
 
+
 export const sendTokenResponse = (userId: string, isSuperAdmin: boolean): string => {
-    return jwt.sign({ id: userId, isSuperAdmin }, "thesecretkey", {
+
+
+    if (!process.env.JWTSECRET) {
+        throw new Error("JWT secret is not defined");
+    }
+
+    return jwt.sign({ id: userId, isSuperAdmin }, process.env.JWTSECRET, {
         expiresIn: "7d"
     });
 };

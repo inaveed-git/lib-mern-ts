@@ -2,17 +2,16 @@ import multer from "multer";
 import path from "node:path";
 import fs from "fs";
 
-// Define the upload directory
+
 const uploadDir = path.resolve(__dirname, "../public/data/uploads");
 
-// Log the upload directory to ensure the path is correct
-console.log("Upload directory:", uploadDir);
 
-// Ensure the directory exists
+
+
 try {
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
-        console.log("Directory created:", uploadDir);  // Log directory creation
+        console.log("Directory created:", uploadDir);
     }
 } catch (error) {
     console.error("Error creating directory:", error);
@@ -20,7 +19,7 @@ try {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir); // Set the upload directory
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);

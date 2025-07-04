@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil/atoms/userAtom";
+import { usePageTitle } from "../hook/usePageTitle";
 
 interface Book {
     _id: string;
@@ -23,6 +24,8 @@ interface Library {
 }
 
 const MyLibrariesPage: React.FC = () => {
+    usePageTitle("My Library's")
+
     const { user } = useRecoilValue(userState);
     const [libraries, setLibraries] = useState<Library[]>([]);
     const [loading, setLoading] = useState(true);

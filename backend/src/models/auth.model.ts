@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs"
 
 
 export interface Iuser extends Document {
-    _id: Types.ObjectId; // Explicitly define as ObjectId
+    _id: Types.ObjectId;
     username: string;
     email: string;
     password: string;

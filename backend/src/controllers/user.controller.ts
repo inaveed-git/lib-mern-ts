@@ -43,13 +43,13 @@ export const deleteUser = async (req: Request, res: Response) => {
             return res.status(400).json({ success: false, message: "Invalid user ID" });
         }
 
-        // Check if user exists
+
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Prevent deleting self
+
         if (user._id.toString() === req.user._id.toString()) {
             return res.status(400).json({
                 success: false,
@@ -57,16 +57,16 @@ export const deleteUser = async (req: Request, res: Response) => {
             });
         }
 
-        // Delete all books created by the user
+
         await Book.deleteMany({ userId });
 
-        // Remove user from all libraries as admin
+
         await Library.updateMany(
             { admin: userId },
-            { $set: { admin: null } } // Or choose a different admin if needed
+            { $set: { admin: null } }
         );
 
-        // Delete the user
+
         await User.findByIdAndDelete(userId);
 
         res.status(200).json({
@@ -121,19 +121,19 @@ export const deleteBook = async (req: Request, res: Response) => {
             return res.status(400).json({ success: false, message: "Invalid book ID" });
         }
 
-        // Check if book exists
+
         const book = await Book.findById(bookId);
         if (!book) {
             return res.status(404).json({ success: false, message: "Book not found" });
         }
 
-        // Remove book from all libraries
+
         await Library.updateMany(
             { books: bookId },
             { $pull: { books: bookId } }
         );
 
-        // Delete the book
+
         await Book.findByIdAndDelete(bookId);
 
         res.status(200).json({

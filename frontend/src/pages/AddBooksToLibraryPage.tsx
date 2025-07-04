@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil/atoms/userAtom";
-
+import { usePageTitle } from '../hook/usePageTitle';
 interface Book {
     _id: string;
     title: string;
@@ -19,6 +19,9 @@ interface Library {
 }
 
 const AddBooksToLibraryPage: React.FC = () => {
+
+    usePageTitle("New Library")
+
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(location.search);
@@ -236,8 +239,8 @@ const AddBooksToLibraryPage: React.FC = () => {
                             <div
                                 key={book._id}
                                 className={`bg-[#1e2a3b] rounded-lg p-4 border-2 cursor-pointer transition-all duration-200 ${selectedBooks.includes(book._id)
-                                        ? "border-blue-500 bg-blue-900/20"
-                                        : "border-[#2d3e50] hover:border-blue-400"
+                                    ? "border-blue-500 bg-blue-900/20"
+                                    : "border-[#2d3e50] hover:border-blue-400"
                                     }`}
                                 onClick={() => handleBookSelect(book._id)}
                             >
@@ -285,8 +288,8 @@ const AddBooksToLibraryPage: React.FC = () => {
                             type="submit"
                             disabled={selectedBooks.length === 0 || submitting}
                             className={`px-6 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${selectedBooks.length === 0 || submitting
-                                    ? "bg-gray-600 cursor-not-allowed"
-                                    : "bg-blue-600 hover:bg-blue-700"
+                                ? "bg-gray-600 cursor-not-allowed"
+                                : "bg-blue-600 hover:bg-blue-700"
                                 }`}
                         >
                             {submitting ? (

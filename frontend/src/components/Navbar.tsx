@@ -1,84 +1,113 @@
-// src/components/Navbar.tsx (optional addition)
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { userState } from "../recoil/atoms/userAtom";
+// src/components/Navbar.tsx
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../recoil/atoms/userAtom';
+import {
+    FaBook,
+    FaHome,
+    FaSignInAlt,
+    FaUserPlus,
+    FaUserCircle,
+
+} from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
     const { user } = useRecoilValue(userState);
     const location = useLocation();
 
-    // Don't show navbar on auth pages
-    if (location.pathname === "/login") {
-        return null;
-    }
+
+    const isActive = (path: string) => location.pathname === path;
+
+
 
     return (
-        <nav className="bg-white shadow-sm">
+        <nav className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] shadow-xl sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16">
-                    <div className="flex">
-                        <div className="flex-shrink-0 flex items-center">
-                            <Link to="/" className="text-xl font-bold text-blue-600">
-                                BookHub
-                            </Link>
-                        </div>
-                        <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <div className="flex items-center justify-between h-16">
+                    {/* Logo/Brand */}
+                    <div className="flex-shrink-0 flex items-center">
+                        <FaBook className="h-8 w-8 text-[#65a3e0] animate-pulse" />
+                        <span className="ml-2 text-xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-indigo-400">
+                            ShelfLib
+                        </span>
+                    </div>
+
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:block">
+                        <div className="ml-10 flex items-center space-x-1">
                             <Link
                                 to="/"
-                                className={`border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${location.pathname === "/" ? "border-b-2" : "text-gray-500 hover:text-gray-700"
-                                    }`}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-all duration-200 ${isActive('/')
+                                    ? 'bg-gradient-to-r from-blue-600/30 to-indigo-700/30 text-white shadow-lg'
+                                    : 'text-gray-300 hover:bg-slate-800/50 hover:text-white'}`}
                             >
+                                <FaHome className="mr-2" />
+                                Home
+                            </Link>
+
+
+                            <Link
+                                to="/lib"
+                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-all duration-200 ${isActive('/lib')
+                                    ? 'bg-gradient-to-r from-blue-600/30 to-indigo-700/30 text-white shadow-lg'
+                                    : 'text-gray-300 hover:bg-slate-800/50 hover:text-white'}`}
+                            >
+                                <FaBook className="mr-2" />
                                 Libraries
                             </Link>
-                            {user && (
+
+
+                            <Link
+                                to="/about"
+                                className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-all duration-200 ${isActive('/about')
+                                    ? 'bg-gradient-to-r from-blue-600/30 to-indigo-700/30 text-white shadow-lg'
+                                    : 'text-gray-300 hover:bg-slate-800/50 hover:text-white'}`}
+                            >
+                                About
+                            </Link>
+                        </div>
+                    </div>
+
+
+                    <div className="hidden md:block">
+                        <div className="ml-4 flex items-center md:ml-6">
+                            {user?._id ? (
                                 <Link
-                                    to="/dashboard"
-                                    className={`border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${location.pathname === "/dashboard" ? "border-b-2" : "text-gray-500 hover:text-gray-700"
-                                        }`}
+                                    to="/dashboard?tab=AdminDash"
+                                    className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 flex items-center transition-all duration-200 hover:scale-105"
                                 >
-                                    My Books
+                                    <FaUserCircle className="mr-2" />
+                                    Dashboard
                                 </Link>
+                            ) : (
+                                <div className="flex space-x-2">
+                                    <Link
+                                        to="/login"
+                                        className="px-4 py-2 rounded-lg text-sm font-medium text-white hover:bg-slate-800/50 flex items-center border border-slate-700 transition-all duration-200"
+                                    >
+                                        <FaSignInAlt className="mr-2" />
+                                        Sign In
+                                    </Link>
+                                    <Link
+                                        to="/register"
+                                        className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 flex items-center transition-all duration-200 hover:scale-105"
+                                    >
+                                        <FaUserPlus className="mr-2" />
+                                        Sign Up
+                                    </Link>
+                                </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                        {user ? (
-                            <div className="ml-3 relative">
-                                <div className="flex items-center space-x-4">
-                                    {user.isAdmin && (
-                                        <Link
-                                            to="/admin-dashboard"
-                                            className="text-sm text-gray-700 hover:text-gray-900"
-                                        >
-                                            Admin Dashboard
-                                        </Link>
-                                    )}
-                                    <Link
-                                        to="/dashboard"
-                                        className="flex items-center text-sm text-gray-700 hover:text-gray-900"
-                                    >
-                                        <span className="mr-2">Hi, {user.username}</span>
-                                        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8 flex items-center justify-center">
-                                            <span className="text-xs font-bold text-gray-600">
-                                                {user.username.charAt(0).toUpperCase()}
-                                            </span>
-                                        </div>
-                                    </Link>
-                                </div>
-                            </div>
-                        ) : (
-                            <Link
-                                to="/login"
-                                className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                            >
-                                Sign in
-                            </Link>
-                        )}
-                    </div>
+
+
                 </div>
             </div>
+
+
+
         </nav>
     );
 };

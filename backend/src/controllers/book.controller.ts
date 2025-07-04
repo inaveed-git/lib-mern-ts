@@ -4,7 +4,7 @@ import fs from "node:fs";
 import Book from "../models/book.model";
 import { uploadOnCloudinary } from "../config/Cloudinary";
 import Library from "../models/library.model";
-// import createHttpError from "http-errors";
+
 
 export const addBook = async (req: Request, res: Response, next: NextFunction) => {
     let coverImagePath = "";
@@ -23,7 +23,7 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        // const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
         if (!files?.coverImage?.[0] || !files?.file?.[0]) {
             return res.status(400).json({ success: false, message: "Cover image and book file are required" });
@@ -32,33 +32,16 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
         const coverImageFile = files.coverImage[0];
         const bookFile = files.file[0];
 
-        // Set file paths
+
         const uploadsDir = path.join(__dirname, "../public/data/uploads");
         coverImagePath = path.join(uploadsDir, coverImageFile.filename);
         filePath = path.join(uploadsDir, bookFile.filename);
 
-        // Check if files exist locally
+
         await fs.promises.access(coverImagePath);
         await fs.promises.access(filePath);
 
-        // Upload to Cloudinary
-        // const [coverImageResponse, fileResponse] = await Promise.all([
-        //     uploadOnCloudinary({
-        //         localPath: coverImagePath,
-        //         fileName: coverImageFile.filename,
-        //         folder: "coverImages",
-        //         format: coverImageFile.mimetype.split("/").pop() || "jpg",
-        //     }),
-        //     uploadOnCloudinary({
-        //         localPath: filePath,
-        //         fileName: bookFile.filename,
-        //         folder: "pdfs",
-        //         format: bookFile.mimetype.split("/").pop() || "pdf",
-        //     })
-        // ]);
 
-
-        // Upload to Cloudinary
         const coverImageResponse = await uploadOnCloudinary({
             localPath: coverImagePath,
             fileName: coverImageFile.filename,
@@ -78,7 +61,7 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
             return res.status(500).json({ success: false, message: "Failed to upload files to Cloudinary" });
         }
 
-        // Save to database
+
         const newBook = new Book({
             title,
             author,
@@ -104,7 +87,7 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
             message: error.message || "Something went wrong"
         });
     } finally {
-        // Cleanup local files
+
         try {
             if (coverImagePath) await fs.promises.unlink(coverImagePath);
         } catch (err) {
@@ -125,7 +108,7 @@ export const addBook = async (req: Request, res: Response, next: NextFunction) =
 
 
 
-// src/controllers/book.controller.ts
+
 export const getUserBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
         if (!req.user || !req.user._id) {
@@ -147,47 +130,35 @@ export const getUserBooks = async (req: Request, res: Response, next: NextFuncti
 };
 
 
-// Update book visibility
-// export const updateBookVisibility = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const { bookId } = req.params;
-//         const { isPublic } = req.body;
+export const downloadBook = async (req: Request, res: Response) => {
+    try {
+        const { bookId } = req.params;
+        const book = await Book.findById(bookId);
 
-//         if (!req.user || !req.user._id) {
-//             return res.status(401).json({ success: false, message: "Unauthorized" });
-//         }
-
-//         const book = await Book.findById(bookId);
-//         if (!book) {
-//             return res.status(404).json({ success: false, message: "Book not found" });
-//         }
-
-//         // Check if user owns the book
-//         if (book.userId.toString() !== req.user._id.toString()) {
-//             return res.status(403).json({ success: false, message: "Not authorized" });
-//         }
-
-//         book.isPublic = Boolean(isPublic);
-//         await book.save();
+        if (!book?.bookFile) {
+            return res.status(404).json({ success: false, message: "Book not found" });
+        }
 
 
+        if (!book) {
+            return res.status(404).json({ success: false, message: "Book not found" });
+        }
 
-//         res.status(200).json({
-//             success: true,
-//             message: "Book visibility updated!",
-//             data: book
-//         });
-//     } catch (error: any) {
-//         res.status(500).json({
-//             success: false,
-//             message: error.message || "Server error"
-//         });
-//     }
-// };
+        if (book.isPublic) {
+            return res.redirect(book?.bookFile);
+        }
 
 
+        if (!req.user || req.user._id.toString() !== book.userId.toString()) {
+            return res.status(403).json({ success: false, message: "Not authorized to download this book" });
+        }
 
 
+        res.redirect(book.bookFile);
+    } catch (error: any) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 
 export const updateBookVisibility = async (req: Request, res: Response, next: NextFunction) => {
@@ -204,7 +175,7 @@ export const updateBookVisibility = async (req: Request, res: Response, next: Ne
             return res.status(404).json({ success: false, message: "Book not found" });
         }
 
-        // Check if user owns the book
+
         if (book.userId.toString() !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: "Not authorized" });
         }
@@ -214,7 +185,7 @@ export const updateBookVisibility = async (req: Request, res: Response, next: Ne
 
 
         if (book.isPublic !== Boolean(isPublic)) {
-            // Update all libraries containing this book
+
             await Library.updateMany(
                 { books: book._id },
                 { $set: { updatedAt: new Date() } }
@@ -234,8 +205,7 @@ export const updateBookVisibility = async (req: Request, res: Response, next: Ne
     }
 };
 
-// Get books in a library
-// book.controller.ts
+
 export const getLibraryBooks = async (
     req: Request,
     res: Response,
@@ -246,25 +216,22 @@ export const getLibraryBooks = async (
         const library = await Library.findById(libraryId);
 
         if (!library) {
-            res.status(404).json({ success: false, message: "Library not found" });
-            return; // Use return instead of returning res
+            return res.status(404).json({ success: false, message: "Library not found" });
         }
+
 
         if (!library.isPublic) {
             if (!req.user || req.user._id.toString() !== library.admin.toString()) {
-                res.status(403).json({ success: false, message: "Not authorized" });
-                return;
+                return res.status(403).json({ success: false, message: "Not authorized" });
             }
         }
 
-        const books = await Book.find({
-            libraries: libraryId,
-            isPublic: true
-        });
+
+        const books = await Book.find({ libraries: libraryId });
 
         res.status(200).json({ success: true, data: books });
     } catch (error: any) {
-        next(error); // Use Express error handling
+        next(error);
     }
 };
 
@@ -272,27 +239,23 @@ export const getLibraryBooks = async (
 
 
 
-
-
-
-// Add to book.controller.ts
 export const getDashboardStats = async (req: Request, res: Response) => {
     try {
         if (!req.user || !req.user._id) {
             return res.status(401).json({ success: false, message: "Unauthorized" });
         }
 
-        // Get counts for the current user
+
         const userBookCount = await Book.countDocuments({ userId: req.user._id });
         const userLibraryCount = await Library.countDocuments({ admin: req.user._id });
 
-        // Get public counts (system-wide)
+
         const publicBookCount = await Book.countDocuments({ isPublic: true });
         const publicLibraryCount = await Library.countDocuments({ isPublic: true });
 
         res.status(200).json({
             success: true,
-            data: { // Keep this as an object, not array
+            data: {
                 userBookCount,
                 userLibraryCount,
                 publicBookCount,

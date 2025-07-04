@@ -110,7 +110,7 @@ const AddBookForm: React.FC = () => {
 
         try {
             const data = new FormData();
-            // Text fields
+
             data.append("title", title);
             data.append("author", author);
             data.append("genre", genre);
@@ -118,12 +118,12 @@ const AddBookForm: React.FC = () => {
             data.append("publisher", publisher);
             data.append("isPublic", String(formData.isPublic));
 
-            // Append libraries
+
             formData.libraries.forEach(libraryId => {
                 data.append("libraries", libraryId);
             });
 
-            // Files
+
             data.append("coverImage", coverImage);
             data.append("file", bookFile);
 
@@ -145,7 +145,7 @@ const AddBookForm: React.FC = () => {
             setSuccessMessage(response.data.message || "Book added successfully!");
             setErrorMessage(null);
 
-            // Reset form
+
             setFormData({
                 title: "",
                 author: "",

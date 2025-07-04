@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+
+
+/* Global Styles */
+.pdf-document .react-pdf__Page {
+  margin: 1rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.pdf-document .react-pdf__Page canvas {
+  max-width: 100%;
+  height: auto !important;
+}

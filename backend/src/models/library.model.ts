@@ -4,8 +4,8 @@ export interface ILibrary extends Document {
     name: string;
     description?: string;
     isPublic: boolean;
-    admin: Types.ObjectId; // User who created the library
-    books: Types.ObjectId[]; // Books in this library
+    admin: Types.ObjectId;
+    books: Types.ObjectId[];
 }
 
 const LibrarySchema = new Schema<ILibrary>({

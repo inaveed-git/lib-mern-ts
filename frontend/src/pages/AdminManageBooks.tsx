@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { userState } from "../recoil/atoms/userAtom";
+import { Link } from "react-router-dom";
+import { usePageTitle } from "../hook/usePageTitle";
 
 interface Book {
     _id: string;
@@ -16,6 +18,7 @@ interface Book {
 }
 
 const AdminManageBooks: React.FC = () => {
+    usePageTitle("Manage Books")
     const { user } = useRecoilValue(userState);
     const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
@@ -186,8 +189,8 @@ const AdminManageBooks: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span
                                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${book.isPublic
-                                                    ? "bg-green-100 text-green-800"
-                                                    : "bg-yellow-100 text-yellow-800"
+                                                ? "bg-green-100 text-green-800"
+                                                : "bg-yellow-100 text-yellow-800"
                                                 }`}
                                         >
                                             {book.isPublic ? "Public" : "Private"}
@@ -197,8 +200,8 @@ const AdminManageBooks: React.FC = () => {
                                         <button
                                             onClick={() => toggleVisibility(book._id, !book.isPublic)}
                                             className={`mr-3 ${book.isPublic
-                                                    ? "text-yellow-600 hover:text-yellow-900"
-                                                    : "text-green-600 hover:text-green-900"
+                                                ? "text-yellow-600 hover:text-yellow-900"
+                                                : "text-green-600 hover:text-green-900"
                                                 }`}
                                         >
                                             {book.isPublic ? "Make Private" : "Make Public"}
@@ -239,12 +242,12 @@ const AdminManageBooks: React.FC = () => {
                             Get started by adding a new book.
                         </p>
                         <div className="mt-6">
-                            <a
-                                href="/create-book"
+                            <Link
+                                to="/dashboard?tab=create-book"
                                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
                                 Add Book
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 )}
