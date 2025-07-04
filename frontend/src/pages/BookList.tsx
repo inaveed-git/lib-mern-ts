@@ -60,9 +60,9 @@ const BookList: React.FC = () => {
         fetchBooks();
     }, []);
 
-    // Handle share button click - copy download link
+
     const handleShareClick = (bookId: string, downloadUrl: string) => {
-        // Copy download URL to clipboard
+
         navigator.clipboard.writeText(downloadUrl)
             .then(() => {
                 setCopiedBookId(bookId);
