@@ -34,8 +34,8 @@ const Navbar: React.FC = () => {
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:block">
-                        <div className="ml-10 flex items-center space-x-1">
+                    <div className="">
+                        <div className="ml-10 flex items-center space-x-1 flex-wrap">
                             <Link
                                 to="/"
                                 className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center transition-all duration-200 ${isActive('/')
